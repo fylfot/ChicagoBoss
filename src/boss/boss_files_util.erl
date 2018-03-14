@@ -200,7 +200,12 @@ web_controller_path(Controller) ->
     filename:join([hd(web_controller_path()), Controller]).
 -spec lib_path() -> [input_string(),...].
 
-lib_path() -> [filename:join([root_src_dir(), "lib"])].
+lib_path() -> [
+    filename:join([root_src_dir(), "lib"]),
+    filename:join([root_src_dir(), "lib", "data"]),
+    filename:join([root_src_dir(), "lib", "logic"]),
+    filename:join([root_src_dir(), "lib", "service"]),
+    filename:join([root_src_dir(), "lib", "tools"])].
 -spec test_path() -> [input_string(),...].
 
 test_path() -> [filename:join([root_src_dir(), "test", "functional"])].
