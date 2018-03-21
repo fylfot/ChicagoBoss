@@ -74,6 +74,7 @@
 -export([template_adapters/0]).
 
 -type input_string() :: string().
+-type name() :: string() | atom() | binary().
 
 
 -spec root_dir() -> input_string().
@@ -201,11 +202,9 @@ web_controller_path(Controller) ->
 -spec lib_path() -> [input_string(),...].
 
 lib_path() -> [
-    filename:join([root_src_dir(), "lib"]),
-    filename:join([root_src_dir(), "lib", "data"]),
-    filename:join([root_src_dir(), "lib", "logic"]),
-    filename:join([root_src_dir(), "lib", "service"]),
-    filename:join([root_src_dir(), "lib", "tools"])].
+    SourcePath = filename:join([root_src_dir(), "lib"]),
+    Subdirs = recursively_list_dir(SourcePath),
+    Subdirs.
 -spec test_path() -> [input_string(),...].
 
 test_path() -> [filename:join([root_src_dir(), "test", "functional"])].
@@ -219,3 +218,32 @@ compiler_adapters() ->
 -spec template_adapters() -> ['boss_template_adapter_eex' | 'boss_template_adapter_erlydtl' | 'boss_template_adapter_jade',...].
 
 template_adapters() -> [boss_template_adapter_erlydtl, boss_template_adapter_jade, boss_template_adapter_eex].
+
+
+
+recursively_list_dir(Dir) -> recursively_list_dir(Dir, false).
+
+recursively_list_dir(Dir, FilesOnly) ->
+    case filelib:is_file(Dir) of
+        true ->
+            case filelib:is_dir(Dir) of
+                true -> {ok, recursively_list_dir([Dir], FilesOnly, [])};
+                false -> {error, enotdir}
+            end;
+        false -> {error, enoent}
+    end.
+
+recursively_list_dir([], _FilesOnly, Acc) -> Acc;
+recursively_list_dir([Path|Paths], FilesOnly, Acc) ->
+    recursively_list_dir(Paths, FilesOnly,
+        case filelib:is_dir(Path) of
+            false -> [Path | Acc];
+            true ->
+                {ok, Listing} = file:list_dir(Path),
+                SubPaths = [filename:join(Path, Name) || Name <- Listing],
+                recursively_list_dir(SubPaths, FilesOnly,
+                    case FilesOnly of
+                        true -> Acc;
+                        false -> [Path | Acc]
+                    end)
+end).
