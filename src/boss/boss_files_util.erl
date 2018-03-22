@@ -201,7 +201,7 @@ web_controller_path(Controller) ->
     filename:join([hd(web_controller_path()), Controller]).
 -spec lib_path() -> [input_string(),...].
 
-lib_path() -> [
+lib_path() ->
     SourcePath = filename:join([root_src_dir(), "lib"]),
     {ok, Subdirs} = recursively_list_dir(SourcePath),
     Subdirs.
