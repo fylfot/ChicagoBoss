@@ -203,7 +203,7 @@ web_controller_path(Controller) ->
 
 lib_path() -> [
     SourcePath = filename:join([root_src_dir(), "lib"]),
-    Subdirs = recursively_list_dir(SourcePath),
+    {ok, Subdirs} = recursively_list_dir(SourcePath),
     Subdirs.
 -spec test_path() -> [input_string(),...].
 
