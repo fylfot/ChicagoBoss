@@ -20,6 +20,8 @@
 -export([find_application_for_path/3]).
 -export([reload/1, route/2, unroute/6, handle/2, get_all/1, set_controllers/2]).
 
+-define(TIMEOUT, 28000).
+
 %%
 %% API Functions
 %%
@@ -34,10 +36,10 @@ stop() ->
     ok.
 
 reload(Pid) ->
-    gen_server:call(Pid, reload).
+    gen_server:call(Pid, reload, ?TIMEOUT).
 
 route(Pid, Url) ->
-    gen_server:call(Pid, {route, Url}).
+    gen_server:call(Pid, {route, Url}, ?TIMEOUT).
 
 unroute(Pid, Application, ControllerList, Controller, undefined, Params) ->
     ControllerModule = list_to_atom(boss_files:web_controller(Application, Controller, ControllerList)),

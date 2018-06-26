@@ -25,7 +25,7 @@ start_link(StartArgs) ->
     supervisor:start_link(?MODULE, StartArgs).
 
 init(StartArgs) ->
-    {ok, {{one_for_one, 10, 10}, [
+    {ok, {{one_for_one, 1000, 1000}, [
                 {router_controller, {boss_router_controller, start_link, [StartArgs]},
                     permanent,
                     2000,
