@@ -143,10 +143,10 @@ build_dynamic_response(App, Bridge, Url, RouterAdapter) ->
                                 RouterAdapter
                                 ),
     {Time, {StatusCode, Headers, Payload}} = TR,
-    ErrorFormat        = "~s ~s [~p] ~p ~pms",
+    ErrorFormat        = "~ts ~ts [~p] ~ts ~tsms\n",
     RequestMethod    = Bridge:request_method(),
     FullUrl        = Bridge:path(),
-    ErrorArgs        = [RequestMethod, FullUrl, App, StatusCode, Time div 1000],
+    ErrorArgs        = [color:green(atom_to_list(RequestMethod)), color:blue(FullUrl), color:whiteb(atom_to_list(App)), color:magentab(sp:str(StatusCode)), color:yellow(sp:str(Time div 1000))],
     log_status_code(StatusCode, ErrorFormat, ErrorArgs),
     Response1        = Bridge:set_status_code(StatusCode),
     Response2        = lists:foldl(fun({K, V}, Acc) ->
@@ -180,12 +180,12 @@ handle_protocol(_)     -> identity.
 
 
 
-log_status_code(500, ErrorFormat, ErrorArgs) ->
-    lager:error(ErrorFormat, ErrorArgs);
-log_status_code(404, ErrorFormat, ErrorArgs) ->
-    lager:warning(ErrorFormat, ErrorArgs);
+%%log_status_code(Code, ErrorFormat, ErrorArgs) when Code >= 500 ->
+%%    lager:error(ErrorFormat, ErrorArgs);
+%%log_status_code(Code, ErrorFormat, ErrorArgs) when Code >= 400 ->
+%%    lager:warning(ErrorFormat, ErrorArgs);
 log_status_code(_, ErrorFormat, ErrorArgs) ->
-    lager:info(ErrorFormat, ErrorArgs).
+    io:fwrite(ErrorFormat, ErrorArgs).
 
 process_stream_generator(_Req, _TransferEncoding, 'HEAD', _Generator, _Acc) ->
     ok;
