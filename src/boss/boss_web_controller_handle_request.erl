@@ -143,7 +143,7 @@ build_dynamic_response(App, Bridge, Url, RouterAdapter) ->
                                 RouterAdapter
                                 ),
     {Time, {StatusCode, Headers, Payload}} = TR,
-    ErrorFormat        = "(~tsms) <~ts> ~ts {~ts} [~ts]\n",
+    ErrorFormat        = "(~5tsms) <~3ts> ~3ts {~ts} [~ts]\n",
     RequestMethod    = Bridge:request_method(),
     FullUrl        = Bridge:path(),
     ErrorArgs        = [color:yellow(sp:str(Time div 1000)), color:magentab(sp:str(StatusCode)), color:green(atom_to_list(RequestMethod)), color:blue(FullUrl), color:whiteb(atom_to_list(App))],
